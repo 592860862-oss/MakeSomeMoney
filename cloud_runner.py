@@ -8,7 +8,7 @@ base=os.environ['PAGES_URL'].rstrip('/')
 if not base.startswith('https://'): raise ValueError('PAGES_URL must use HTTPS')
 job=os.environ['JOB_ID']
 def api(action,payload):
-    request=urllib.request.Request(base+'/api/runner/'+job+'/'+action,json.dumps(payload,ensure_ascii=False).encode(),{'Content-Type':'application/json','Authorization':'Bearer '+os.environ['RUNNER_SECRET']})
+    request=urllib.request.Request(base+'/api/runner/'+job+'/'+action,json.dumps(payload,ensure_ascii=False).encode(),{'Content-Type':'application/json','Accept':'application/json','User-Agent':'MakeSomeMoney-FundRunner/1.1','Authorization':'Bearer '+os.environ['RUNNER_SECRET']}
     with urllib.request.urlopen(request,timeout=60) as r:return json.load(r)
 
 def progress(message):
