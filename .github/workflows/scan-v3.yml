@@ -1,0 +1,38 @@
+name: Fund discovery V3
+on:
+  workflow_dispatch:
+    inputs:
+      job_id:
+        description: Pages job id
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: fund-discovery
+  cancel-in-progress: false
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/cache@v4
+        with:
+          path: output/history-v3
+          key: fund-v3-${{ github.run_id }}
+          restore-keys: fund-v3-
+      - run: python cloud_runner_v3.py
+        env:
+          JOB_ID: ${{ inputs.job_id }}
+          PAGES_URL: ${{ secrets.PAGES_URL }}
+          RUNNER_SECRET: ${{ secrets.RUNNER_SECRET }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fund-v3-${{ github.run_id }}
+          path: output/
+          retention-days: 30
